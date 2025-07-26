@@ -82,9 +82,9 @@
                     <td><?php echo $order['id']; ?></td>
                     <td><?php echo $order['name']; ?></td>
                     <td><?php echo $order['price']; ?></td>
-                    <?php if($order['kakutei'] !== '0000-00-00'){?>
+                    <?php if($order['kakutei'] !== null){?>
                         <td>決済確定済</td>
-                    <?php }else if($order['cancel'] !== '0000-00-00'){ ?>
+                    <?php }else if($order['cancel'] !== null){ ?>
                         <td></td>
                     <?php }else{ ?>
                         <td>
@@ -95,9 +95,9 @@
                             </form>
                         </td>
                     <?php } ?>
-                    <?php if($order['kakutei'] !== '0000-00-00'){?>
+                    <?php if($order['kakutei'] !== null){?>
                         <td></td>
-                    <?php }else if($order['cancel'] !== '0000-00-00'){ ?>
+                    <?php }else if($order['cancel'] !== null){ ?>
                         <td>取消済</td>
                     <?php }else{ ?>
                         <td>
