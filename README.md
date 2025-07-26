@@ -1,0 +1,141 @@
+# Stripe PHP決済システム
+
+このプロジェクトは、Stripe APIを使用したPHPベースの決済システムです。クレジットカードの登録、与信、決済確定、取消などの機能を提供します。
+
+## 機能
+
+- クレジットカード登録
+- 与信処理
+- 決済確定
+- 決済取消
+- 購入履歴の管理
+- データベース連携
+
+## 必要な環境
+
+- PHP 7.4以上
+- MySQL 5.7以上
+- Composer
+- XAMPP（推奨）
+
+## セットアップ
+
+### 1. 依存関係のインストール
+
+```bash
+composer install
+```
+
+### 2. データベースの設定
+
+MySQLデータベースを作成し、以下のテーブルを作成してください：
+
+```sql
+CREATE DATABASE stripe;
+USE stripe;
+
+CREATE TABLE orders (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    name VARCHAR(255) NOT NULL,
+    price INT NOT NULL,
+    stripe_pi_id VARCHAR(255) NOT NULL,
+    stripe_customer_id VARCHAR(255) NOT NULL,
+    yoshin_status VARCHAR(50) NOT NULL,
+    yoshin DATETIME NOT NULL,
+    kakutei DATETIME DEFAULT '0000-00-00 00:00:00',
+    cancel DATETIME DEFAULT '0000-00-00 00:00:00'
+);
+```
+
+### 3. 設定ファイルの編集
+
+`config.php`ファイルを編集し、以下の項目を設定してください：
+
+- データベース接続情報（DB_HOST, DB_USER, DB_PASS, DB_NAME）
+- Stripe APIキー（テスト用または本番用）
+
+```php
+// データベース設定
+define('DB_HOST', 'localhost');
+define('DB_USER', 'root');
+define('DB_PASS', '');
+define('DB_NAME', 'stripe');
+
+// Stripe APIキー設定
+$stripeSecretKey = 'your_stripe_secret_key';
+$stripePublishableKey = 'your_stripe_publishable_key';
+```
+
+### 4. Webサーバーの設定
+
+XAMPPを使用している場合、プロジェクトを`htdocs`フォルダに配置し、ブラウザでアクセスしてください。
+
+## 使用方法
+
+### 1. 商品購入ページ
+
+`index.php`にアクセスして商品購入を開始します。
+
+### 2. クレジットカード登録
+
+購入時は「クレジットカード登録」ボタンをクリックしてカード情報を登録します。
+登録が完了すると「購入」ボタンが表示されます。
+
+### 3. 購入処理
+
+- 与信処理：商品購入時に与信が実行されます
+- 決済確定：購入一覧ページから決済を確定できます
+- 取消：購入一覧ページから決済を取消できます
+
+### 4. 購入履歴の確認
+
+`item_list.php`で購入履歴を確認できます。
+
+## ファイル構成
+
+```
+stripe/
+├── index.php          # 商品購入ページ
+├── card.php           # 決済処理コントローラー
+├── create_card.php    # クレジットカード登録ページ
+├── item_list.php      # 購入履歴一覧ページ
+├── crud.php           # データベース操作関数
+├── config.php         # 設定ファイル
+├── composer.json      # Composer設定
+└── vendor/            # 依存関係ライブラリ
+```
+
+## 主要な機能
+
+### 与信処理
+- Stripe PaymentIntentを使用した与信処理
+- 手動キャプチャ方式（`capture_method: "manual"`）
+- オフセッション決済対応
+
+### 決済確定
+- PaymentIntentのcaptureメソッドを使用
+- データベースに確定日時を記録
+
+### 決済取消
+- PaymentIntentのcancelメソッドを使用
+- データベースに取消日時を記録
+
+### クレジットカード登録
+- Stripe Elementsを使用したセキュアなカード入力
+- SetupIntentを使用したペイメントメソッド登録
+- カスタマーとの紐付け
+
+## セキュリティ
+
+- Stripe Elementsを使用したセキュアなカード情報入力
+- セッション管理による状態管理
+- プリペアドステートメントによるSQLインジェクション対策
+
+## サポート
+
+問題が発生した場合は、以下を確認してください：
+
+1. Stripe APIキーが正しく設定されているか
+2. データベース接続が正常か
+3. PHPのバージョンが要件を満たしているか
+4. Composerの依存関係が正しくインストールされているか 
